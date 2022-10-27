@@ -230,11 +230,15 @@ app.post('/api/v1/unfollow-user', async (req, res)=> {
 
 // create post 
 app.post('/api/v1/create-post', async (req, res)=> {
+    const {title, description, userId, thumbnail, isHidden, status } = req.body
     try {
         let createPost = await models.Post.create({
-            title: 'Hello',
-            description: 'Hiiii@gmail.com',
-            userId: 1,
+            title: title,
+            description: description,
+            userId: userId,
+            thumbnail: thumbnail,
+            isHidden: isHidden,
+            status: status
         })
         res.status(200).json({
             status: 'Success',
@@ -309,7 +313,7 @@ app.post('/api/v1/like-post/', async (req, res)=> {
     }catch(err){
         res.status(400).json({
             status: 'Failed',
-            error: "Failed to like post"
+            error: err
         })
     }
     
