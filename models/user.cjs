@@ -1,7 +1,9 @@
-'use strict';
+
+const bcrypt = require("bcryptjs") 
 const {
   Model
 } = require('sequelize');
+
 // import crypt from 'bcrypt'
 // import postModel from 'post.cjs'
 
@@ -51,6 +53,24 @@ module.exports = (sequelize, DataTypes) => {
     User.belongsToMany(models.Post)
   }
 
+
+//   User.methods.passwordMatched = async function(passwordToBeVerified){
+//     return await bcrypt.compare(passwordToBeVerified, this.password)
+// }
+
+// User.pre('save', async function(next){
+//   console.log('this',this)
+//    if(!this.isModified("password")){
+//           next()
+//    }
+
+//    const salt = await bcrypt.genSalt(10);
+//    console.log('salt',salt)
+//    const hashed = await bcrypt.hash(this.password, salt)
+//    console.log('hashed',hashed)
+
+//   this.password = hashed;
+// })
 
   return User;
 };
