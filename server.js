@@ -88,7 +88,7 @@ app.post('/api/v1/create-user', async (req, res)=> {
     } catch (error) {
         res.status(400).json({
             status: 'bad',
-            error: "Registration Failed"
+            error: error
         })
     }  
 })
@@ -141,9 +141,6 @@ app.get('/api/v1/get-allusers', async (req, res)=> {
         let getUser = await models.User.findAll({
             include: [{
                 model: models.Post 
-            },
-            {
-                model: models.Followers
             }
         ]
         })
@@ -153,7 +150,7 @@ app.get('/api/v1/get-allusers', async (req, res)=> {
         })
     }catch(err){
         res.status(400).json({
-            status: 'Login Failed',
+            status: 'Get all users Failed',
             error: err
         })
     }
@@ -185,9 +182,9 @@ app.get('/api/v1/get-singleuser/:id', async (req, res)=> {
 
 
 // follow user
-app.post('/api/v1/follow-user/:id', async (req, res)=> {
+app.post('/api/v1/follow-user/', async (req, res)=> {
     const {followerId, mainUserId} =  req.body
-    const {id} = req.params
+
     try{
         let followedUser = await models.Followers.create({
             mainUserId: mainUserId,

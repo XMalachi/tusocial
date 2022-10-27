@@ -6,7 +6,7 @@ module.exports = {
   "database": process.env.DATABASE,
   "host": process.env.HOST,
   "dialect": "mysql",
-  "use_env_variable": "JAWSDB_URL"
+
 }, 
 "test": {
   "username": process.env.USERNAME,
@@ -14,7 +14,7 @@ module.exports = {
   "database": process.env.DATABASE,
   "host": process.env.HOST,
   "dialect": "mysql",
-  "use_env_variable": "JAWSDB_URL"
+
 },
 "production": {
     "username": process.env.USERNAME,
@@ -22,7 +22,7 @@ module.exports = {
     "database": process.env.DATABASE,
     "host": process.env.HOST,
     "dialect": "mysql",
-    "use_env_variable": "JAWSDB_URL"
+
 }
 };
 
