@@ -14,11 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Likes.init({
-    id: {
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
-    },
     userId: DataTypes.STRING,
     postId: DataTypes.STRING
   }, {
