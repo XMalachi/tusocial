@@ -47,6 +47,7 @@ models.Likes.belongsTo(models.Post)
 models.User.hasMany(models.Followers)
 models.Followers.belongsTo(models.User)
 
+// test server
 app.get('/', (req, res)=> {
     let message = "Welcome to backend"
     res.json({
@@ -55,10 +56,11 @@ app.get('/', (req, res)=> {
     })
 })
 
-app.post('/create-user', async (req, res)=> {
+// register
+app.post('/api/v1/create-user', async (req, res)=> {
     const { name, email, password, address, interest, status} = req.body
     try {
-        const userExists = await models.User.findOne({ where: email}).catch(err => {
+        const userExists = await models.User.findOne({ where: {email}}).catch(err => {
             if(err) console.log( "Error : ", err)
         })
 
@@ -89,7 +91,8 @@ app.post('/create-user', async (req, res)=> {
     }  
 })
 
-app.post('/login', async (req, res)=> {
+// login user
+app.post('/api/v1/login', async (req, res)=> {
     const {email, password} = req.body
 
     try {
@@ -120,15 +123,6 @@ app.post('/login', async (req, res)=> {
             throw new Error('incorrect Email or password')
         }
 
-            res.status(200).json({
-                status: 'Login Successfull',
-                user: {
-                    email,
-                    token: generateToken(password)
-                }
-            })
-            console.log("password",generateToken(password))
-       
     } catch (error) {
         res.status(400).json({
             status: 'Login Failed',
@@ -137,8 +131,36 @@ app.post('/login', async (req, res)=> {
     }
 })
 
+// get all user request
 
-app.get('/get-alluser', async (req, res)=> {
+app.get('/api/v1/get-allusers', async (req, res)=> {
+    // const {id} = req.params
+    try{
+        let getUser = await models.User.findAll({
+            include: [{
+                model: models.Post 
+            },
+            {
+                model: models.Followers
+            }
+        ]
+        })
+        res.status(200).json({
+            status: 'Success',
+            getUser
+        })
+    }catch(err){
+        res.status(400).json({
+            status: 'Login Failed',
+            error: err
+        })
+    }
+    
+})
+
+// get single user
+
+app.get('/api/v1/get-singleuser/:id', async (req, res)=> {
     const {id} = req.params
     try{
         let getUser = await models.User.findByPk(id, {
@@ -159,12 +181,9 @@ app.get('/get-alluser', async (req, res)=> {
     
 })
 
-// recover account
-
-
 
 // follow user
-app.post('/follow-user/:id', async (req, res)=> {
+app.post('/api/v1/follow-user/:id', async (req, res)=> {
     const {followerId, mainUserId} =  req.body
     const {id} = req.params
     try{
@@ -173,7 +192,7 @@ app.post('/follow-user/:id', async (req, res)=> {
             followerId: followerId
         })
         res.status(200).json({
-            status: `You just followed ${mainUserId}`,
+            status: `You just followed post with id ${mainUserId}`,
             followedUser
         })
     }catch(err){
@@ -187,16 +206,15 @@ app.post('/follow-user/:id', async (req, res)=> {
 
 
 //  unfollow user
-app.post('/unlike-post/:id', async (req, res)=> {
-    const {postid, userid} =  req.body
-    const {id} = req.params
+app.post('/api/v1/unfollow-user', async (req, res)=> {
+    const {followerId, mainUserId} =  req.body
     try{
-        let unlikedPost = await models.Likes.destroy({
-            where: { postId: postid, userId: userid },
+        let unfollowUser = await models.Followers.destroy({
+            where: { followerId:followerId,  mainUserId: mainUserId},
         })
         res.status(200).json({
-            status: `You just unliked ${postid} post`,
-            unlikedPost
+            status: `You just unfolowed post with id ${mainUserId} `,
+            unfollowUser
         })
     }catch(err){
         res.status(400).json({
@@ -207,14 +225,12 @@ app.post('/unlike-post/:id', async (req, res)=> {
     
 })
 
-// get all followers
 
 
 
-// show follwers based on proximity
 
 // create post 
-app.post('/create-post', async (req, res)=> {
+app.post('/api/v1/create-post', async (req, res)=> {
     try {
         let createPost = await models.Post.create({
             title: 'Hello',
@@ -233,7 +249,7 @@ app.post('/create-post', async (req, res)=> {
 
 // get all posts
 
-app.get('/get-allposts', async (req, res)=> {
+app.get('/api/v1/get-allposts', async (req, res)=> {
     // const {id} = req.params
     try{
         let getUser = await models.User.findAll()
@@ -250,7 +266,10 @@ app.get('/get-allposts', async (req, res)=> {
     
 })
 
-app.get('/get-post/:id', async (req, res)=> {
+
+// get single post 
+
+app.get('/api/v1/get-post/:id', async (req, res)=> {
     const {id} = req.params
     try{
         let getPost = await models.Post.findByPk(id, {
@@ -276,9 +295,8 @@ app.get('/get-post/:id', async (req, res)=> {
 
 // like a post 
 
-app.post('/like-post/:id', async (req, res)=> {
+app.post('/api/v1/like-post/', async (req, res)=> {
     const {postid, userid} =  req.body
-    const {id} = req.params
     console.log(req.body, "req.query from likes")
     try{
         let likedPost = await models.Likes.create({
@@ -286,7 +304,7 @@ app.post('/like-post/:id', async (req, res)=> {
             userId: userid
         })
         res.status(200).json({
-            status: `You just liked ${postid} post`,
+            status: `You just liked post with id ${postid} `,
             likedPost
         })
     }catch(err){
@@ -300,15 +318,15 @@ app.post('/like-post/:id', async (req, res)=> {
 
 // unlike post
 
-app.post('/unlike-post/:id', async (req, res)=> {
+app.post('/api/v1/unlike-post/', async (req, res)=> {
     const {postid, userid} =  req.body
-    const {id} = req.params
+
     try{
         let unlikedPost = await models.Likes.destroy({
             where: { postId: postid, userId: userid },
         })
         res.status(200).json({
-            status: `You just unliked ${postid} post`,
+            status: `You just unliked post with id ${postid} `,
             unlikedPost
         })
     }catch(err){
@@ -322,8 +340,7 @@ app.post('/unlike-post/:id', async (req, res)=> {
 
 // update post
 
-
-app.put('/update-post/:id', async (req, res)=> {
+app.put('/api/v1/update-post/:id', async (req, res)=> {
     const {title, description, isHidden, status, thumbnail} =  req.body
     const {id} = req.params
     try{
@@ -376,7 +393,7 @@ app.put('/update-post/:id', async (req, res)=> {
 
 
 // hide post
-app.put('/hide-post/:id', async (req, res)=> {
+app.put('/api/v1/hide-post/:id', async (req, res)=> {
     // const {isHidden} =  req.body
     const {id} = req.params
     try{
@@ -411,7 +428,7 @@ app.put('/hide-post/:id', async (req, res)=> {
 
 // unhide post
 
-app.put('/unhide-post/:id', async (req, res)=> {
+app.put('/api/v1/unhide-post/:id', async (req, res)=> {
     // const {isHidden} =  req.body
     const {id} = req.params
     try{
@@ -430,7 +447,7 @@ app.put('/unhide-post/:id', async (req, res)=> {
             );
         
         res.status(200).json({
-            status: `You just hid this post`,
+            status: `You can now view this post`,
             hiddenPost
         })
     }catch(err){
@@ -443,7 +460,7 @@ app.put('/unhide-post/:id', async (req, res)=> {
 })
 
 // delete post
-app.delete('/delete-post/:id', async (req, res)=> {
+app.delete('/api/v1/delete-post/:id', async (req, res)=> {
     const {id} = req.params
     try {
 
@@ -451,7 +468,7 @@ app.delete('/delete-post/:id', async (req, res)=> {
 
         let deletedPost = await deletePost.destroy()
         res.status(200).json({
-            status: 'Success',
+            status: 'Deleted Successfully',
             deletedPost
         })
     } catch (error) {
