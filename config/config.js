@@ -15,11 +15,11 @@ module.exports = {
     "dialect": "mysql"
 },
 "production": {
-    "username": "root",
+    "username": null,
     "password": null,
     "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "use_env_variable": "DATABASE_URL"
+    "use_env_variable": "JAWSDB_URL"
 }
 };
