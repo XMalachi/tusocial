@@ -298,16 +298,15 @@ app.get('/api/v1/get-post/:id', async (req, res)=> {
 
 // like a post 
 
-app.post('/api/v1/like-post/', async (req, res)=> {
+app.post('/api/v1/like-post', async (req, res)=> {
     const {postId, userId} =  req.body
-    console.log(req.body, "req.query from likes")
     try{
         let likedPost = await models.Likes.create({
             postId: postId,
             userId: userId
         })
         res.status(200).json({
-            status: `You just liked post with id ${postid} `,
+            status: `You just liked post with id ${postId} `,
             likedPost
         })
     }catch(err){
@@ -321,7 +320,7 @@ app.post('/api/v1/like-post/', async (req, res)=> {
 
 // unlike post
 
-app.post('/api/v1/unlike-post/', async (req, res)=> {
+app.post('/api/v1/unlike-post', async (req, res)=> {
     const {postid, userid} =  req.body
 
     try{
