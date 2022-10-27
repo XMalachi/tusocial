@@ -468,6 +468,10 @@ app.delete('/api/v1/delete-post/:id', async (req, res)=> {
 
         let deletePost = await models.Post.findByPk(id)
 
+        if(!deletePost){
+            throw new Error("Post not found")
+        }
+
         let deletedPost = await deletePost.destroy()
         res.status(200).json({
             status: 'Deleted Successfully',
