@@ -251,10 +251,10 @@ app.post('/api/v1/create-post', async (req, res)=> {
 app.get('/api/v1/get-allposts', async (req, res)=> {
     // const {id} = req.params
     try{
-        let getUser = await models.User.findAll()
+        let getPost = await models.Post.findAll()
         res.status(200).json({
             status: 'Success',
-            getUser
+            getPost
         })
     }catch(err){
         res.status(400).json({
